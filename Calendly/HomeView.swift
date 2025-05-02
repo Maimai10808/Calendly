@@ -7,13 +7,14 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct HomeView: View {
     let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     
     @State var selectedMonth = 0
     @State var selectedDate = Date()
     
     var body: some View {
+        NavigationStack {
         VStack {
             Image("Maimai")
                 .resizable()
@@ -27,7 +28,7 @@ struct ContentView: View {
             
             Rectangle()
                 .frame(height: 1 )
-                .foregroundStyle(.gray)
+                .foregroundStyle(Color("hintOfSteelBlue"))
             
            // Selec a Day
             VStack(spacing: 20) {
@@ -46,12 +47,13 @@ struct ContentView: View {
                         Image(systemName: "lessthan")
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 16, height: 28)
+                            .frame(width: 20, height: 28)
+                            .foregroundStyle(Color("hintOfSteelBlue"))
                     }
                     
                     Spacer()
                     
-                    Text(selectedDate.monthAndYear())
+                    Text(selectedDate.monthDayYearFormat())
                         .font(.title2)
                     
                     Spacer()
@@ -64,7 +66,8 @@ struct ContentView: View {
                         Image(systemName: "greaterthan")
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 16, height: 28)
+                            .frame(width: 20, height: 28)
+                            .foregroundStyle(Color("hintOfSteelBlue"))
                     }
                     
                     Spacer()
@@ -82,7 +85,22 @@ struct ContentView: View {
                     ForEach(fetchDates()) { value in
                         ZStack {
                             if value.day != -1 {
-                                Text("\(value.day)")
+                                NavigationLink {
+                                   DayView()
+                                } label: {
+                                    Text("\(value.day)")
+                                        .foregroundStyle(value.day % 2 != 0 ? Color("oxford") : .black)
+                                        .fontWeight(value.day % 2 != 0 ? .bold : .none)
+                                        .background {
+                                            ZStack(alignment: .bottom) {
+                                                Circle()
+                                                    .frame(width: 48, height: 48)
+                                                    .foregroundStyle(value.day % 2 != 0 ? .blue.opacity(0.1) : .clear)
+                                            }
+                                        }
+                                }
+                                .disabled(value.day % 2 == 0)
+                                    
                             } else {
                                 Text("")
                             }
@@ -90,12 +108,17 @@ struct ContentView: View {
                         .frame(width: 32, height: 32)
                         
                     }
+                
                     
                 }
             }
+            .frame(maxHeight: .infinity, alignment: .top)
             .onChange(of: selectedMonth) { _ in
                 selectedDate = fetchSeletedMonth()
+            
             }
+        }
+        .background(Color("timberBeam"))
         }
     }
     
@@ -130,42 +153,7 @@ struct CalendarDate: Identifiable {
 }
 
 #Preview {
-    ContentView()
+    HomeView()
 }
 
-extension Date {
-    
-    func monthAndYear() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM YYYY"
-        
-        return formatter.string(from: self)
-    }
-    
-    func datesOfMonth() -> [Date] {
-        let calendar = Calendar.current
-        let currentMonth = calendar.component(.month, from: self)
-        let currentYear = calendar.component(.year, from: self)
-        
-        var startDateComponets = DateComponents()
-        startDateComponets.year = currentYear
-        startDateComponets.month = currentMonth
-        startDateComponets.day = 1
-        let startDate = calendar.date(from: startDateComponets)!
-        
-        var endDateComponents = DateComponents()
-        endDateComponents.month = 1
-        endDateComponents.day = -1
-        let endDate = calendar.date(byAdding: endDateComponents, to: startDate)!
-        
-        var dates: [Date] = []
-        var currentDate = startDate
-        
-        while currentDate <= endDate {
-            dates.append(currentDate)
-            currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
-        }
-        
-        return dates
-    }
-}
+
