@@ -90,6 +90,14 @@ struct HomeView: View {
                 viewModel.selectedDate = viewModel.fetchSeletedMonth()
             
             }
+            .task {
+                do {
+                    let appts = try await DatabaseManager.shared.avaliableAppointments()
+                    print(appts)
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
         }
         .background(Color("timberBeam"))
         }
