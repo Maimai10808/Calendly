@@ -12,6 +12,8 @@ struct BookingView: View {
     @State private var email = ""
     @State private var notes = ""
     
+    var currentDate: Date
+    
     var body: some View {
         VStack {
             VStack(alignment: .leading, spacing: 20) {
@@ -27,10 +29,10 @@ struct BookingView: View {
                     Text("FaceTime")
                 }
                 
-                HStack {
+                HStack(alignment: .top) {
                     Image(systemName: "calendar")
                     
-                    Text("12:00pm - 12:30pm, Tuesday, August 29, 2023")
+                    Text(currentDate.bookingViewDateFormat())
                 }
                 
             }
@@ -70,7 +72,7 @@ struct BookingView: View {
                     )
                 
                 NavigationLink {
-                    ConfirmationView()
+                    ConfirmationView(currentDate: currentDate)
                 } label: {
                     Text("Schedule Event")
                         .bold()
@@ -96,5 +98,5 @@ struct BookingView: View {
 }
 
 #Preview {
-    BookingView()
+    BookingView(currentDate: Date())
 }
