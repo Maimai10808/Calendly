@@ -6,12 +6,14 @@
 //
 
 import Foundation
+import SwiftUI
 
 class HomeViewModel: ObservableObject {
     let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     
     @Published var selectedMonth = 0
     @Published var selectedDate = Date()
+    @Published var path = NavigationPath()
     
     func fetchDates() -> [CalendarDate] {
         let calendar = Calendar.current

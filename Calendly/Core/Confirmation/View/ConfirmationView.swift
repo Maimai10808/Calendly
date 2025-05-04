@@ -10,6 +10,13 @@ import SwiftUI
 struct ConfirmationView: View {
     var currentDate: Date
     
+    @EnvironmentObject var manager: DatabaseManager
+    @StateObject var viewModel: BookingViewModel
+    
+    @Environment(\.dismiss) var dismiss
+    @State private var isUploading = false
+    
+    
     var body: some View {
         VStack {
             Image("Maimai")
@@ -52,18 +59,43 @@ struct ConfirmationView: View {
             
             Spacer()
             
-            Button {
-                
-            } label: {
-                Text("Done")
-                    .padding()
-                    .foregroundStyle(.babyPowder)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(.hintOfSteelBlue)
-                    )
+            if isUploading {
+                            ProgressView("Booking…")
+                                .padding()
+            } else {
+                Button {
+                    if !viewModel.name.isEmpty && !viewModel.email.isEmpty {
+                        Task {
+                            do {
+                                try await manager.bookAppointment(name: viewModel.name, email: viewModel.email, notes: viewModel.notes, date: currentDate)
+                                viewModel.name = ""
+                                viewModel.email = ""
+                                viewModel.notes = ""
+                                isUploading = false
+                                dismiss() // ✅ 上传成功后返回上一个页面
+                                AlertPresenter.presentAlert(
+                                    title: "Success",
+                                    message: "Your Booking has been saved.",
+                                    okTitle: "Got it"
+                                )
+                            } catch {
+                                print(error.localizedDescription)
+                                isUploading = false
+                            }
+                        }
+                    }
+                } label: {
+                    Text("Done")
+                        .padding()
+                        .foregroundStyle(.babyPowder)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundStyle(.hintOfSteelBlue)
+                        )
+                }
             }
+            
             
             
             
@@ -77,6 +109,4 @@ struct ConfirmationView: View {
     }
 }
 
-#Preview {
-    ConfirmationView(currentDate: Date())
-}
+

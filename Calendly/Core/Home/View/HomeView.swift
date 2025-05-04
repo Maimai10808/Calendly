@@ -10,9 +10,12 @@ import SwiftUI
 struct HomeView: View {
     
     @StateObject var viewModel: HomeViewModel
+    @EnvironmentObject var manager: DatabaseManager
+  
+    
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $viewModel.path) {
         VStack {
             Image("Maimai")
                 .resizable()
@@ -90,9 +93,11 @@ struct HomeView: View {
                 viewModel.selectedDate = viewModel.fetchSeletedMonth()
             
             }
+            
             .task {
                 do {
-                    let appts = try await DatabaseManager.shared.avaliableAppointments()
+                    // 使用单例调用
+                    let appts = try await DatabaseManager.shared.fetchavaliableAppointments()  // ❌ 因为当前是 private
                     print(appts)
                 } catch {
                     print(error.localizedDescription)

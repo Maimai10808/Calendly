@@ -8,26 +8,32 @@
 import SwiftUI
 
 struct CalendarCellView: View {
+    
     let value: CalendarDate
+    @StateObject var manager = DatabaseManager()
 
     var body: some View {
         ZStack {
             if value.day != -1 {
+                
+                let hasAppts = manager.days.contains(value.date.monthDayYearFormat())
+                
                 NavigationLink {
                     DayView(viewModel: DayViewModel(currentDate: value.date))
+                        .environmentObject(manager)
                 } label: {
                     Text("\(value.day)")
-                        .foregroundStyle(value.day % 2 != 0 ? Color("oxford") : .black)
-                        .fontWeight(value.day % 2 != 0 ? .bold : .none)
+                        .foregroundStyle(hasAppts ? Color("oxford") : .black)
+                        .fontWeight(hasAppts ? .bold : .none)
                         .background {
                             ZStack(alignment: .bottom) {
                                 Circle()
                                     .frame(width: 48, height: 48)
-                                    .foregroundStyle(value.day % 2 != 0 ? .blue.opacity(0.1) : .clear)
+                                    .foregroundStyle(hasAppts ? .blue.opacity(0.1) : .clear)
                             }
                         }
                 }
-                .disabled(value.day % 2 == 0)
+                .disabled(!hasAppts)
             } else {
                 Text("")
             }

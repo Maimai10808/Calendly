@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct BookingView: View {
-    @State private var name = ""
-    @State private var email = ""
-    @State private var notes = ""
+    @EnvironmentObject var manager: DatabaseManager
+    @StateObject var viewModel: BookingViewModel
     
     var currentDate: Date
+    
+    
     
     var body: some View {
         VStack {
@@ -46,7 +47,7 @@ struct BookingView: View {
                 
                 Text("Name")
                 
-                TextField("", text: $name)
+                TextField("", text: $viewModel.name)
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 10)
@@ -55,7 +56,7 @@ struct BookingView: View {
                 
                 Text("Email")
                 
-                TextField("", text: $email)
+                TextField("", text: $viewModel.email)
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 10)
@@ -64,7 +65,7 @@ struct BookingView: View {
                 
                 Text("Please share anything that will help prepare for our meeting")
                 
-                TextField("", text: $notes, axis: .vertical)
+                TextField("", text: $viewModel.notes, axis: .vertical)
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 10)
@@ -72,7 +73,8 @@ struct BookingView: View {
                     )
                 
                 NavigationLink {
-                    ConfirmationView(currentDate: currentDate)
+                    ConfirmationView(currentDate: currentDate, viewModel: viewModel)
+                        .environmentObject(manager)
                 } label: {
                     Text("Schedule Event")
                         .bold()
@@ -86,6 +88,8 @@ struct BookingView: View {
                 }
                 
                 
+                
+                
             }
             .padding()
             
@@ -97,6 +101,4 @@ struct BookingView: View {
     }
 }
 
-#Preview {
-    BookingView(currentDate: Date())
-}
+

@@ -9,7 +9,7 @@ import Foundation
 
 struct Hours: Codable {
     let id: Int
-    let createdAt: String  // 也可以用 Date，如果你设置了解码格式
+    let createdAt: Date  // 也可以用 Date，如果你设置了解码格式
     let day: Int
     let start: Int
     let end: Int
@@ -21,8 +21,8 @@ struct Hours: Codable {
 }
 
 struct Appointment: Codable {
-    let id: Int
-    let createdAt: String
+    var id: Int?
+    let createdAt: Date
     let name: String
     let email: String
     let date: Date

@@ -10,6 +10,7 @@ import SwiftUI
 struct DayView: View {
     
     @StateObject var viewModel: DayViewModel
+    @EnvironmentObject var manager: DatabaseManager
     
     var body: some View {
         ScrollView {
@@ -26,6 +27,9 @@ struct DayView: View {
                 }
                 .padding(.horizontal)
             }
+        }
+        .onAppear {
+            self.viewModel.dates = manager.avaliableDates.filter({ $0.monthDayYearFormat() == viewModel.currentDate.monthDayYearFormat() })
         }
         .navigationTitle(viewModel.currentDate.dayOfTheWeek())
         .navigationBarTitleDisplayMode(.inline)

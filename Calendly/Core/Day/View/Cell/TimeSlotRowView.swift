@@ -11,6 +11,7 @@ struct TimeSlotRowView: View {
     
     let date: Date
     @Binding var selectedDate: Date?
+    @EnvironmentObject var manager: DatabaseManager
     
     var body: some View {
         HStack {
@@ -40,7 +41,8 @@ struct TimeSlotRowView: View {
             
             if let selected = selectedDate, selected == date {
                 NavigationLink {
-                    BookingView(currentDate: selected)
+                    BookingView(viewModel: BookingViewModel(), currentDate: selected)
+                        .environmentObject(manager)
                 } label: {
                     Text("Next")
                         .bold()
